@@ -1,5 +1,4 @@
 import { notion } from "@/lib/notion";
-import Link from "next/link";
 import CodeBlock from "./CodeBlock";
 import Image from "next/image";
 import { NotionBlock, RichText } from "@/types/notion";

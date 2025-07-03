@@ -1,32 +1,25 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import BlockRenderer from "./BlockRenderer";
-import { fetchMoreBlocks } from "@/app/actions/actions";
+import { useState } from 'react';
+import BlockRenderer from './BlockRenderer';
+import { fetchMoreBlocks } from '@/app/actions/actions';
+import { NotionBlock } from '@/types/notion';
 
-export default function PaginatedBlocks({
-  initialBlocks,
-  pageId,
-}: {
-  initialBlocks: any[];
-  pageId: string;
-}) {
-  const [blocks, setBlocks] = useState(initialBlocks);
-  const [cursor, setCursor] = useState<string | null>(
-    initialBlocks[initialBlocks.length - 1]?.id || null
-  );
+export default function PaginatedBlocks({ initialBlocks, pageId }: { initialBlocks: NotionBlock[], pageId: string }) {
+  const [blocks, setBlocks] = useState<NotionBlock[]>(initialBlocks);
+  const [cursor, setCursor] = useState<string | null>(initialBlocks[initialBlocks.length - 1]?.id || null);
 
   const loadMore = async () => {
     if (!cursor) return;
 
     const res = await fetchMoreBlocks(pageId, cursor);
-    setBlocks([...blocks, ...res.results]);
+    setBlocks([...blocks, ...res.results as NotionBlock[]]);
     setCursor(res.next_cursor);
   };
 
   return (
     <div>
-      {blocks.map((block: any) => (
+      {blocks.map((block: NotionBlock) => (
         <BlockRenderer key={block.id} block={block} />
       ))}
       {cursor && (

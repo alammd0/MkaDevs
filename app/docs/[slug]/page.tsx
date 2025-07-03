@@ -1,10 +1,12 @@
 import { notion } from "@/lib/notion";
 import BlockRenderer from "@/components/BlockRenderer";
 import BackButton from "@/components/BackButton";
+import { NotionBlock } from "@/types/notion";
+import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
-async function getToggleChildren(blockId: string) {
+async function getToggleChildren(blockId: string): Promise<NotionBlock[]> {
   const res = await notion.blocks.children.list({ block_id: blockId });
-  return res.results;
+  return res.results as NotionBlock[];
 }
 
 export default async function DocPage({
@@ -22,17 +24,17 @@ export default async function DocPage({
     },
   });
 
-  const page = data.results[0];
-  const title = (page as any).properties?.Name?.title?.[0]?.plain_text ?? "Untitled";
+  const page = data.results[0] as PageObjectResponse;
+  const title = page.properties?.Name?.title?.[0]?.plain_text ?? "Untitled";
   const blocks = await notion.blocks.children.list({ block_id: page.id });
 
-  const resolvedBlocks = await Promise.all(
-    blocks.results.map(async (block: any) => {
-      if (block.has_children) {
+  const resolvedBlocks: NotionBlock[] = await Promise.all(
+    blocks.results.map(async (block) => {
+      if ((block as NotionBlock).has_children) {
         const children = await getToggleChildren(block.id);
-        return { ...block, children };
+        return { ...(block as NotionBlock), children };
       }
-      return block;
+      return block as NotionBlock;
     })
   );
 
@@ -40,7 +42,7 @@ export default async function DocPage({
     <div className="max-w-3xl mx-auto p-6 text-white">
       <BackButton />
       <h1 className="text-4xl font-bold my-4">{title}</h1>
-      {resolvedBlocks.map((block: any) => (
+      {resolvedBlocks.map((block) => (
         <BlockRenderer key={block.id} block={block} />
       ))}
     </div>
