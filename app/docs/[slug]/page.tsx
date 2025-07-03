@@ -3,12 +3,14 @@ import BlockRenderer from "@/components/BlockRenderer";
 import BackButton from "@/components/BackButton";
 import { NotionBlock } from "@/types/notion";
 import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import { PageProps } from "next";
+
 async function getToggleChildren(blockId: string): Promise<NotionBlock[]> {
   const res = await notion.blocks.children.list({ block_id: blockId });
   return res.results as NotionBlock[];
 }
 
-export default async function DocPage({ params, searchParams /* eslint-disable-line @typescript-eslint/no-unused-vars */ }: { params: { slug: string }, searchParams?: { [key: string]: string | string[] | undefined } }) {
+export default async function DocPage({ params, searchParams /* eslint-disable-line @typescript-eslint/no-unused-vars */ }: PageProps<{ slug: string }, { [key: string]: string | string[] | undefined }>) {
   const data = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID!,
     filter: {
