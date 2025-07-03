@@ -9,11 +9,11 @@ async function getToggleChildren(blockId: string): Promise<NotionBlock[]> {
   return res.results as NotionBlock[];
 }
 
-export default async function DocPage({
-  params,
-}: {
+interface DocPageProps {
   params: { slug: string };
-}) {
+}
+
+export default async function DocPage({ params }: DocPageProps) {
   const data = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID!,
     filter: {
