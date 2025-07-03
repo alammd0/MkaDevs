@@ -1,6 +1,7 @@
 import { getCourses } from "@/lib/notionApi";
 import Image from "next/image";
 import Link from "next/link";
+import { Course } from "@/types/notion";
 
 export default async function ContentHeading() {
   const courses = await getCourses();
@@ -8,17 +9,15 @@ export default async function ContentHeading() {
   return (
     <div className="w-8/12 mx-auto mt-8">
       <div className="flex flex-col-reverse gap-4">
-        {courses.map((course) => {
-          const hasIcon = (c: any): c is { icon: any } => "icon" in c && c.icon;
+        {courses.map((course: Course) => {
           const icon =
-            hasIcon(course) && course.icon?.type === "file"
+            course.icon?.type === "file"
               ? course.icon.file?.url
-              : hasIcon(course) &&
-                course.icon?.type === "external"
+              : course.icon?.type === "external"
               ? course.icon.external?.url
               : null;
 
-          const props = (course as any).properties;
+          const props = course.properties;
           const title = props?.Name?.title?.[0]?.text?.content ?? "Untitled Course";
           const tags = props?.Tags?.multi_select ?? [];
           const slug = props?.Slug?.rich_text?.[0]?.text?.content;
@@ -31,7 +30,7 @@ export default async function ContentHeading() {
 
           return (
             <div
-              key={course.id} 
+              key={course.id}
               className="flex items-center gap-4 mb-4 p-4 text-white bg-gray-700 navbar-shadow rounded-lg shadow-sm"
             >
               <div className="flex gap-10 items-center">
@@ -41,7 +40,7 @@ export default async function ContentHeading() {
                       src={icon}
                       width={120}
                       height={120}
-                      alt={`${title} Icon`} // Improved alt text
+                      alt={`${title} Icon`}
                       className="rounded-md"
                     />
                   )}
@@ -52,7 +51,7 @@ export default async function ContentHeading() {
                     {title}
                   </h2>
                   <div className="flex flex-wrap gap-6">
-                    {tags.map((tag: any) => (
+                    {tags.map((tag) => (
                       <p
                         className="text-[14px] bg-gray-500 px-2 py-1 rounded-sm cursor-pointer hover:bg-gray-800 transition duration-75"
                         key={tag.id}

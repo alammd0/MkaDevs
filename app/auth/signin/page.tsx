@@ -77,7 +77,7 @@ export default function SignInPage() {
         </form>
 
         <p className="mt-2 text-center text-gray-600">
-          Don't have an account?{" "}
+          Don`&apos;`t have an account?{" "}
           <Link href="/auth/register">Please create one</Link>
         </p>
 
