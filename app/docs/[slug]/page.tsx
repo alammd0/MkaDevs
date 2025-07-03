@@ -3,7 +3,6 @@ import BlockRenderer from "@/components/BlockRenderer";
 import BackButton from "@/components/BackButton";
 import { NotionBlock } from "@/types/notion";
 import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
-
 async function getToggleChildren(blockId: string): Promise<NotionBlock[]> {
   const res = await notion.blocks.children.list({ block_id: blockId });
   return res.results as NotionBlock[];
@@ -54,5 +53,6 @@ export async function generateStaticParams() {
     params: {
       slug: (page as PageObjectResponse).properties?.Slug?.rich_text[0]?.plain_text,
     },
+    searchParams: {}, // Explicitly include an empty searchParams object
   }));
 }
