@@ -11,10 +11,9 @@ async function getToggleChildren(blockId: string): Promise<NotionBlock[]> {
 
 interface CustomPageProps {
   params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export default async function DocPage({ params, searchParams }: CustomPageProps) {
+export default async function DocPage({ params }: CustomPageProps) {
   const data = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID!,
     filter: {
@@ -28,7 +27,6 @@ export default async function DocPage({ params, searchParams }: CustomPageProps)
   const page = data.results[0] as PageObjectResponse;
   const title = page.properties?.Name?.title?.[0]?.plain_text ?? "Untitled";
   const blocks = await notion.blocks.children.list({ block_id: page.id });
-
   const resolvedBlocks: NotionBlock[] = await Promise.all(
     blocks.results.map(async (block) => {
       if ((block as NotionBlock).has_children) {
@@ -57,7 +55,8 @@ export async function generateStaticParams() {
 
   return data.results.map((page) => ({
     params: {
-      slug: (page as PageObjectResponse).properties?.Slug?.rich_text[0]?.plain_text,
+      slug: (page as PageObjectResponse).properties?.Slug?.rich_text[0]
+        ?.plain_text,
     },
   }));
 }
