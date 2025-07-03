@@ -51,7 +51,8 @@ export async function generateStaticParams() {
   });
 
   return data.results.map((page) => ({
-    slug: (page as PageObjectResponse).properties?.Slug?.rich_text?.[0]
-      ?.plain_text,
+    params: {
+      slug: (page as PageObjectResponse).properties?.Slug?.rich_text[0]?.plain_text,
+    },
   }));
 }
