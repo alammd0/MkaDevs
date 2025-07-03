@@ -9,7 +9,7 @@ async function getToggleChildren(blockId: string): Promise<NotionBlock[]> {
   return res.results as NotionBlock[];
 }
 
-interface CustomPageProps {
+type CustomPageProps = {
   params: { slug: string };
 }
 
