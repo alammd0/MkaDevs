@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
 import { compare } from "bcryptjs";
 
-export const authOptions = {
+const handler = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -89,14 +89,6 @@ export const authOptions = {
 
   pages: { signIn: "/auth/signin" },
   secret: process.env.NEXTAUTH_SECRET,
-};
+});
 
-const handler = NextAuth(authOptions);
-
-export async function GET(req: Request, res: Response) {
-  return handler(req, res);
-}
-
-export async function POST(req: Request, res: Response) {
-  return handler(req, res);
-}
+export { handler as GET, handler as POST };
