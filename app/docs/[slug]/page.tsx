@@ -50,3 +50,14 @@ export default async function DocPage({ params }: PageProps) {
     </div>
   );
 }
+
+export async function generateStaticParams() {
+  const data = await notion.databases.query({
+    database_id: process.env.NOTION_DATABASE_ID!,
+  });
+
+  return data.results.map((page) => ({
+    slug: (page as PageObjectResponse).properties?.Slug?.rich_text?.[0]
+      ?.plain_text,
+  }));
+}
