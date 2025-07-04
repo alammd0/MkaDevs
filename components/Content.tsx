@@ -1,7 +1,33 @@
 import { getCourses } from "@/lib/notionApi";
 import Image from "next/image";
 import Link from "next/link";
-import { Course } from "@/types/notion";
+
+export interface Course {
+  id: string | null;
+  icon?: string | null;
+  title: string | null;
+  tags: string[] | null;
+  slug: string | null;
+  published: boolean | null;
+  date: string | null;
+  properties: {
+    Name?: {
+      title?: { text?: { content?: string } }[];
+    };
+    Tags?: {
+      multi_select?: { id: string; name: string }[];
+    };
+    Slug?: {
+      rich_text?: { text?: { content?: string } }[];
+    };
+    Published?: {
+      checkbox?: boolean;
+    };
+    Date?: {
+      date?: { start?: string };
+    };
+  };
+}
 
 export default async function ContentHeading() {
   const courses = await getCourses();
@@ -9,7 +35,7 @@ export default async function ContentHeading() {
   return (
     <div className="w-8/12 mx-auto mt-8">
       <div className="flex flex-col-reverse gap-4">
-        {courses.map((course: Course) => {
+        {courses.map((course) => {
           const icon =
             course.icon?.type === "file"
               ? course.icon.file?.url
@@ -17,8 +43,9 @@ export default async function ContentHeading() {
               ? course.icon.external?.url
               : null;
 
-          const props = course.properties;
-          const title = props?.Name?.title?.[0]?.text?.content ?? "Untitled Course";
+          const props = (course as unknown as Course).properties;
+          const title =
+            props?.Name?.title?.[0]?.text?.content ?? "Untitled Course";
           const tags = props?.Tags?.multi_select ?? [];
           const slug = props?.Slug?.rich_text?.[0]?.text?.content;
           const published = props?.Published?.checkbox ?? false;
@@ -67,7 +94,12 @@ export default async function ContentHeading() {
                       {published ? "Published" : "Writing"}
                     </p>
 
-                    <Link className="flex text-[12px] bg-gray-500 hover:bg-gray-800 text-white px-2 py-1 rounded-md" href={`/docs/${slug}`}>View Details</Link>
+                    <Link
+                      className="flex text-[12px] bg-gray-500 hover:bg-gray-800 text-white px-2 py-1 rounded-md"
+                      href={`/docs/${slug}`}
+                    >
+                      View Details
+                    </Link>
                   </div>
                 </div>
               </div>

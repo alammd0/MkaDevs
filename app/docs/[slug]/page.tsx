@@ -9,7 +9,11 @@ async function getToggleChildren(blockId: string): Promise<NotionBlock[]> {
   return res.results as NotionBlock[];
 }
 
-export default async function DocPage({ params } : {params : {slug : string}}) {
+export default async function DocPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const data = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID!,
     filter: {
@@ -21,7 +25,16 @@ export default async function DocPage({ params } : {params : {slug : string}}) {
   });
 
   const page = data.results[0] as PageObjectResponse;
-  const title = page.properties?.Name?.title?.[0]?.plain_text ?? "Untitled";
+  const nameProp = page.properties?.Name;
+  let title = "Untitled";
+  if (
+    nameProp &&
+    nameProp.type === "title" &&
+    Array.isArray(nameProp.title) &&
+    nameProp.title[0]
+  ) {
+    title = nameProp.title[0].plain_text;
+  }
   const blocks = await notion.blocks.children.list({ block_id: page.id });
   const resolvedBlocks: NotionBlock[] = await Promise.all(
     blocks.results.map(async (block) => {
@@ -49,8 +62,17 @@ export async function generateStaticParams() {
     database_id: process.env.NOTION_DATABASE_ID!,
   });
 
-  return data.results.map((page) => ({
-    slug: (page as PageObjectResponse).properties?.Slug?.rich_text[0]?.plain_text,
-  }));
+  return data.results.map((page) => {
+    const slugProp = (page as PageObjectResponse).properties?.Slug;
+    let slug: string | undefined = undefined;
+    if (
+      slugProp &&
+      slugProp.type === "rich_text" &&
+      Array.isArray(slugProp.rich_text) &&
+      slugProp.rich_text[0]
+    ) {
+      slug = slugProp.rich_text[0].plain_text;
+    }
+    return { slug };
+  });
 }
-

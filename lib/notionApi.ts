@@ -1,3 +1,4 @@
+import { PageObjectResponse } from "@notionhq/client";
 import { notion } from "./notion";
 
 export async function getCourses() {
@@ -5,5 +6,5 @@ export async function getCourses() {
     database_id: process.env.NOTION_DATABASE_ID!,
   });
 
-  return response.results;
+  return response.results as PageObjectResponse[];
 }
