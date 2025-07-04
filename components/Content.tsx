@@ -73,7 +73,7 @@ export default async function ContentHeading() {
                   )}
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
                   <h2 className="text-2xl font-semibold font-sans capitalize">
                     {title}
                   </h2>
