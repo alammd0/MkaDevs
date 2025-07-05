@@ -93,8 +93,8 @@ export default async function BlockRenderer({ block }: { block: NotionBlock }) {
           : block.image.file.url;
       return (
         <Image
-          height={100}
-          width={100}
+          height={350}
+          width={350}
           src={imageUrl}
           alt={block.image.caption[0]?.plain_text || "image"}
           className="my-4"
